@@ -21,6 +21,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        backendAzureRmUseEnvironmentVariablesForAuthentication: true
         backendServiceArm: 'Ahamed-Subscription(9211ca43-4409-4921-b493-413dc5e72c82)'
         backendAzureRmResourceGroupName: 'storage-grp'
         backendAzureRmStorageAccountName: 'demostorage3000'
