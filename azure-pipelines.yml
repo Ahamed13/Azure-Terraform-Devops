@@ -37,7 +37,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        commandOptions: '''-out=terraform-plan.tfplan'''
+        commandOptions: '-out="terraform-plan.tfplan"'
         environmentServiceNameAzureRM: 'Ahamed-Subscription(9211ca43-4409-4921-b493-413dc5e72c82)'
     
     - task: PublishPipelineArtifact@1
