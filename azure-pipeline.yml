@@ -1,0 +1,54 @@
+trigger:
+- main
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- group: Terraform-Credentials
+
+stages:
+- stage: TerraformPlan
+  displayName: RunTerraformCommand
+  jobs:
+  - job: TerraformJob
+    steps:
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendAzureRmUseEnvironmentVariablesForAuthentication: false
+        backendAzureRmUseEntraIdForAuthentication: true
+        backendServiceArm: 'Ahamed-Subscription(9211ca43-4409-4921-b493-413dc5e72c82)'
+        backendAzureRmResourceGroupName: 'storage-grp'
+        backendAzureRmStorageAccountName: 'demostorage3000'
+        backendAzureRmContainerName: 'tf-blob'
+        backendAzureRmKey: 'terraform.tfstate'
+      env:
+        ARM_CLIENT_ID: $(TF_VAR_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(TF_VAR_CLIENT_SECRET)
+        ARM_SUBCRIPTION_ID: $(TF_VAR_SUBCRIPTION_ID)
+        ARM_TENANT_ID: $(TF_VAR_TENANT_ID)
+        ARM_USE_OIDC: true
+
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+
+    - task: TerraformTaskV4@4
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-out=tfplan'
+        environmentServiceNameAzureRM: 'Ahamed-Subscription(9211ca43-4409-4921-b493-413dc5e72c82)'
+      env:
+        ARM_CLIENT_ID: $(TF_VAR_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(TF_VAR_CLIENT_SECRET)
+        ARM_SUBCRIPTION_ID: $(TF_VAR_SUBCRIPTION_ID)
+        ARM_TENANT_ID: $(TF_VAR_TENANT_ID)
+        ARM_USE_OIDC: true
