@@ -1,32 +1,36 @@
 trigger:
 - main
-
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 variables:
 - group: Terraform-Credentials
 
 stages:
-- stage: Plan
-  displayName: 'Terraform Plan'
+- stage: TerraformPlan
+  displayName: RunTerraformCommand
   jobs:
-  - job: PlanJob
-    displayName: 'Run Terraform Plan'
-    
+  - job: TerraformJob
     steps:
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'latest'
 
     - task: TerraformTaskV4@4
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendAzureRmUseEnvironmentVariablesForAuthentication: false
-        backendAzureRmUseEntraIdForAuthentication: false
         backendServiceArm: 'Ahamed-Subscription(9211ca43-4409-4921-b493-413dc5e72c82)'
-        backendAzureRmResourceGroupName: 'DefaultResourceGroup-EUS'
+        backendAzureRmResourceGroupName: 'storage-grp'
         backendAzureRmStorageAccountName: 'demostorage3000'
         backendAzureRmContainerName: 'tf-blob'
         backendAzureRmKey: 'terraform.tfstate'
+      env:
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBCRIPTION_ID: $(ARM_SUBCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
 
     - task: TerraformTaskV4@4
       inputs:
@@ -37,13 +41,5 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        commandOptions: '-out="terraform-plan.tfplan"'
+        commandOptions: '-out=tfplan'
         environmentServiceNameAzureRM: 'Ahamed-Subscription(9211ca43-4409-4921-b493-413dc5e72c82)'
-    
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Pipeline.Workspace)'
-        artifact: 'terraform-plan'
-        publishLocation: 'pipeline'
-        
-    
