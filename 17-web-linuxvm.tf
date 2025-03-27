@@ -8,7 +8,7 @@ resource "azurerm_linux_virtual_machine" "web_linux" {
     network_interface_ids = [ azurerm_network_interface.web_linuxvm_nic.id ]
     admin_ssh_key {
       username = "ahamedadmin"
-      public_key = file("E:\\Books\\Terraform\\Terraform-Azure\\Azure-TF\\azure-virtual-network\\ssh-keys\\terraform-azure.pub")
+      public_key = file("ssh-keys/terraform-azure.pub")
     }
 
     os_disk {
