@@ -71,3 +71,8 @@ variable "bastion_subnet_address" {
     default = [ "10.0.100.0/24" ]
   
 }
+
+variable "subscription_id" {}
+variable "tenant_id" {}
+variable "client_id" {}
+variable "client_secret" {}
